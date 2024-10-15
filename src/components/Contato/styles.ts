@@ -1,16 +1,19 @@
 import styled from 'styled-components'
 import variaveis from '../../styles/variaveis'
 
+import * as enums from '../../utils/enums/Contato'
+
 type TagProps = {
-  categoria?: string
+  categoria?: enums.Categoria
 }
 
 function retornaCorDeFundo(props: TagProps): string {
   if ('categoria' in props) {
-    if (props.categoria === 'Amigos') return variaveis.azul
-    if (props.categoria === 'Familia') return variaveis.rosa
-    if (props.categoria === 'Profissional') return variaveis.amarelo
-    if (props.categoria === 'Serviços') return variaveis.marrom
+    if (props.categoria === enums.Categoria.AMIGOS) return variaveis.azul
+    if (props.categoria === enums.Categoria.FAMILIA) return variaveis.rosa
+    if (props.categoria === enums.Categoria.PROFISSIONAL)
+      return variaveis.amarelo
+    if (props.categoria === enums.Categoria.SERVICOS) return variaveis.marrom
   }
   return ''
 }
