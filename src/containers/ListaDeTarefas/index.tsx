@@ -1,51 +1,73 @@
+import { useSelector } from 'react-redux'
+import { RootReducer } from '../../store'
 import Contato from '../../components/Contato'
-import * as S from './styles'
+import * as S from '../../styles'
 
-import * as enums from '../../utils/enums/Contato'
+const ListaDeContato = () => {
+  const { itens } = useSelector((state: RootReducer) => state.contatos)
+  const { termo, criterio, valor } = useSelector(
+    (state: RootReducer) => state.filtro
+  )
 
-const contatos = [
-  {
-    titulo: 'Jocson de Souza',
-    categoria: enums.Categoria.AMIGOS,
-    email: 'jocson_herry@hotmail.com',
-    fone: '(11) 9 6479-4591'
-  },
-  {
-    titulo: 'Naty Whisky',
-    categoria: enums.Categoria.FAMILIA,
-    email: 'naty.wissy@hotmail.com',
-    fone: '(11) 9 1234-5678'
-  },
-  {
-    titulo: 'Pedro Amaro',
-    categoria: enums.Categoria.PROFISSIONAL,
-    email: 'pedro.a.maro@hotmail.com',
-    fone: '(11) 9 4589-6597'
-  },
-  {
-    titulo: 'Manoel Manual',
-    categoria: enums.Categoria.SERVICOS,
-    email: 'm.manual@hotmail.com',
-    fone: '(11) 9 3251-6575'
+  const filtraContatos = () => {
+    let contatosFiltrados = itens
+
+    if (termo !== undefined) {
+      contatosFiltrados = contatosFiltrados.filter(
+        (item) => item.titulo.toLowerCase().search(termo.toLowerCase()) >= 0
+      )
+
+      if (criterio === 'categoria') {
+        contatosFiltrados = contatosFiltrados.filter(
+          (item) => item.categoria === valor
+        )
+      }
+
+      return contatosFiltrados
+    } else {
+      return itens
+    }
   }
-]
 
-const ListaDeContato = () => (
-  <S.Container>
-    <p>2 contatos marcados como: &quot;Amigos&ldquo; e &quot;Todos&ldquo;</p>
-    <S.Lista>
-      {contatos.map((c) => (
-        <li key={c.titulo}>
-          <Contato
-            titulo={c.titulo}
-            categoria={c.categoria}
-            email={c.email}
-            fone={c.fone}
-          />
-        </li>
-      ))}
-    </S.Lista>
-  </S.Container>
-)
+  const exibeResultadoFiltragem = (quantidade: number) => {
+    let mensagem = ''
+    const complemantacao =
+      termo !== undefined && termo.length > 0 ? `e "${termo}"` : ''
+
+    if (criterio === 'Todos') {
+      mensagem = `${quantidade} contato(s) encontrado(s) como: Todos ${complemantacao}`
+    } else {
+      mensagem = `${quantidade} tarefas encontradas como: "${`${criterio}=${valor}`} ${complemantacao}"`
+    }
+    return mensagem
+  }
+
+  const contatos = filtraContatos()
+  const mensagem = exibeResultadoFiltragem(contatos.length)
+
+  return (
+    <S.MainContainer>
+      <S.Titulo as="p">{mensagem}</S.Titulo>
+      <ul>
+        <li>{termo}</li>
+        <li>{criterio}</li>
+        <li>{valor}</li>
+      </ul>
+      <S.Lista>
+        {contatos.map((c) => (
+          <li key={c.titulo}>
+            <Contato
+              titulo={c.titulo}
+              categoria={c.categoria}
+              email={c.email}
+              telefone={c.telefone}
+              id={c.id}
+            />
+          </li>
+        ))}
+      </S.Lista>
+    </S.MainContainer>
+  )
+}
 
 export default ListaDeContato

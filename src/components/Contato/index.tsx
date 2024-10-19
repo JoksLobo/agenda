@@ -1,30 +1,79 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { remover, editar } from '../../store/reducers/contatos'
 import * as S from './styles'
-import * as enums from '../../utils/enums/Contato'
+import ContatoClass from '../../models/Contato'
+import { BotaoSalvar } from '../../styles'
 
-type Props = {
-  titulo: string
-  categoria: enums.Categoria
-  email: string
-  fone: string
-}
+type Props = ContatoClass
 
-const Contato = ({ titulo, categoria, email, fone }: Props) => {
+const Contato = ({
+  titulo,
+  categoria,
+  email: emailOriginal,
+  telefone: foneOriginal,
+  id
+}: Props) => {
+  const dispatch = useDispatch()
   const [estaEditando, setEstaEditando] = useState(false)
+  const [email, setEmail] = useState('')
+  const [telefone, setFone] = useState('')
+
+  useEffect(() => {
+    if (emailOriginal.length > 0) {
+      setEmail(emailOriginal)
+    }
+    if (foneOriginal.length > 0) {
+      setFone(foneOriginal)
+    }
+  }, [emailOriginal, foneOriginal])
+
+  function cancelarEdicao() {
+    setEstaEditando(false)
+    setEmail(emailOriginal)
+    setFone(foneOriginal)
+  }
 
   return (
     <S.Card>
       <S.Titulo>{titulo}</S.Titulo>
       <S.Tag categoria={categoria}>{categoria}</S.Tag>
       <S.Descricao>
-        <S.Email>{email}</S.Email>
-        <S.Fone>{fone}</S.Fone>
+        <S.Email
+          disabled={!estaEditando}
+          value={email}
+          onChange={(evento) => setEmail(evento.target.value)}
+        >
+          {email}
+        </S.Email>
+        <S.Fone
+          disabled={!estaEditando}
+          value={telefone}
+          onChange={(evento) => setFone(evento.target.value)}
+        >
+          {telefone}
+        </S.Fone>
       </S.Descricao>
       <S.BarraAcoes>
         {estaEditando ? (
           <>
-            <S.BotaoSalvar>Salvar</S.BotaoSalvar>
-            <S.BotaoCancelarERemover onClick={() => setEstaEditando(false)}>
+            <BotaoSalvar
+              onClick={() => {
+                dispatch(
+                  editar({
+                    email,
+                    telefone,
+                    id: id,
+                    titulo,
+                    categoria
+                  })
+                )
+                setEstaEditando(false)
+              }}
+            >
+              Salvar
+            </BotaoSalvar>
+            <S.BotaoCancelarERemover onClick={cancelarEdicao}>
               Cancelar
             </S.BotaoCancelarERemover>
           </>
@@ -33,7 +82,9 @@ const Contato = ({ titulo, categoria, email, fone }: Props) => {
             <S.BotaoEditar onClick={() => setEstaEditando(true)}>
               Editar
             </S.BotaoEditar>
-            <S.BotaoCancelarERemover>Remover</S.BotaoCancelarERemover>
+            <S.BotaoCancelarERemover onClick={() => dispatch(remover(id))}>
+              Remover
+            </S.BotaoCancelarERemover>
           </>
         )}
       </S.BarraAcoes>

@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import variaveis from '../../styles/variaveis'
-
+import { Botao } from '../../styles'
 import * as enums from '../../utils/enums/Contato'
 
 type TagProps = {
@@ -51,15 +51,17 @@ export const Descricao = styled.div`
   margin-top: 8px;
   margin-bottom: 16px;
 `
-export const Email = styled.p`
+export const Email = styled.textarea`
   height: 32px;
   width: 100%;
   border: none;
+  resize: none;
 `
-export const Fone = styled.p`
+export const Fone = styled.textarea`
   height: 32px;
   width: 100%;
   border: none;
+  resize: none;
 `
 
 export const BarraAcoes = styled.div`
@@ -67,20 +69,6 @@ export const BarraAcoes = styled.div`
   padding-top: 16px;
 `
 
-export const Botao = styled.button`
-  font-weight: bold;
-  font-size: 12px;
-  color: #fff;
-  padding: 8px 12px;
-  border: none;
-  cursor: pointer;
-  background-color: #2f3640;
-  border-radius: 8px;
-  margin-right: 8px;
-`
-export const BotaoSalvar = styled(Botao)`
-  background-color: ${variaveis.verde};
-`
 export const BotaoCancelarERemover = styled(Botao)`
   background-color: ${variaveis.vermelho};
 `
